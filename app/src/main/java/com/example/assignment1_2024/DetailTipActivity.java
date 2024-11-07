@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,30 +30,41 @@ public class DetailTipActivity extends AppCompatActivity {
         onClickBack();
 
         Intent intent = getIntent();
-        int id = (int)intent.getExtras().get("tip_id");
+        int tipIndex = intent.getIntExtra("tip_index", 0);
+        String weightType = intent.getStringExtra("weight_type");
+        String name = intent.getStringExtra("name");
 
-        Tips tips= Tips.tips[id];
+        // Filter tips based on the weight type and get the selected tip by index
+        List<Tips> tipsList = Tips.getTipsByType(weightType);
+        if (tipIndex < tipsList.size()) {
+            Tips tips = tipsList.get(tipIndex);
 
-        imgDetail.setImageResource(tips.getImageID());
+            imgDetail.setImageResource(tips.getImageID());
 
-        String detailsText = "Tip1: " + tips.getTip1() + "\n\nTip2: " + tips.getTip2() + "\n\nTip3: " + tips.getTip3();
-        txtDetail.setText(detailsText);
+            String detailsText = "Tip1: " + tips.getTip1() + "\n\nTip2: " + tips.getTip2() + "\n\nTip3: " + tips.getTip3();
+            txtDetail.setText(detailsText);
 
-        String name= intent.getStringExtra("name");
+            // Dynamically generate the health center options based on user’s name and location
+            String[] locations = {
+                    name + " can go to Green Apple health center in Ramallah\n",
+                    "\n" + name + " can go to TrustCare Medical Group health center in Jerusalem\n",
+                    "\n" + name + " can go to Premier health center in Hebron\n",
+                    "\n" + name + " can go to Harmony Women’s health center in Nablus\n",
+                    "\n" + name + " can go to Serene Mental health center in Jenin\n",
+                    "\n" + name + " can go to LifeLine Physical Therapy health center in Tolkarm\n",
+                    "\n" + name + " can go to Wellness Path Chiropractic health center in Jerico\n",
+                    "\n" + name + " can go to Peak Performance Sports Medicine health center in BeitLahm\n",
+                    "\n" + name + " can go to Serene Mental health center in Safad\n"
+            };
 
-        String[] locations = {name + " can going to Green Apple health center in Ramallah\n",
-                              "\n" + name + " can going to TrustCare Medical Group health center in Jerusalem\n",
-                              "\n" + name + " can going to Premier health center in Hebron\n",
-                              "\n" + name + " can going to Harmony Women’s health center in Nablus\n",
-                              "\n" + name + " can going to Serene Mental health center in Jenin\n",
-                              "\n" + name + " can going to LifeLine Physical Therapy health center in Tolkarm\n",
-                              "\n" + name + " can going to Wellness Path Chiropractic health center in Jerico\n",
-                              "\n" + name + " can going to Peak Performance Sports Medicine health center in BeitLahm\n",
-                              "\n" + name + " can going to Serene Mental health center in Safad\n"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, locations);
-        lstDetail.setAdapter(adapter);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, locations);
+            lstDetail.setAdapter(adapter);
+        }
+        else {
+            Toast.makeText(this, "Invalid tip selection.", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private void setUpViews(){
         imgDetail= findViewById(R.id.imgDetail);

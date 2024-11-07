@@ -59,19 +59,20 @@ public class TipsActivity extends AppCompatActivity {
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String str= spnWeight.getSelectedItem().toString();
-                List<Tips> tips= Tips.getTipsByType(str);
-                Tips[] arr= tips.toArray(new Tips[tips.size()]);
-                ArrayAdapter<Tips> adapter= new ArrayAdapter<Tips>(TipsActivity.this, android.R.layout.simple_list_item_1, arr);
+                String weightType = spnWeight.getSelectedItem().toString();
+                List<Tips> tips = Tips.getTipsByType(weightType);
+                Tips[] arr = tips.toArray(new Tips[tips.size()]);
+                ArrayAdapter<Tips> adapter = new ArrayAdapter<>(TipsActivity.this, android.R.layout.simple_list_item_1, arr);
                 lstTips.setAdapter(adapter);
 
-                String name= getUserName(edtName.getText().toString());
+                String name = getUserName(edtName.getText().toString());
 
                 AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent intent = new Intent(TipsActivity.this, DetailTipActivity.class);
-                        intent.putExtra("tip_id", (int)id);
+                        intent.putExtra("tip_index", position); // Pass the position of the tip
+                        intent.putExtra("weight_type", weightType); // Pass the selected weight type
                         intent.putExtra("name", name);
                         startActivity(intent);
                     }
@@ -80,6 +81,7 @@ public class TipsActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private String getUserName(String name){
         if(name.trim().isEmpty()){
